@@ -27,7 +27,7 @@ class MyViewControllerTests: XCTestCase {
 }
 ```
 
-When an assertion first runs, a snapshot is automatically recorded to disk and the test will fail, printing out the file path of any newly-recorded reference.
+When an assertion first runs, a snapshot is automatically recorded to disk and the test will fail, printing out the file path of any newly-recorded reference. Verify the generated image is correct before commiting to source control.
 
 > 🛑 failed - No reference was found on disk. Automatically recorded snapshot: …
 >
@@ -35,9 +35,13 @@ When an assertion first runs, a snapshot is automatically recorded to disk and t
 >
 > Re-run "testMyViewController" to test against the newly-recorded snapshot.
 
-Repeat test runs will load this reference and compare it with the runtime value. If they don't match, the test will fail and describe the difference. Failures can be inspected from Xcode's Report Navigator or by inspecting the file URLs of the failure.
+Repeat test runs will load this reference and compare it with the runtime value. By commiting this reference to source control, the same comparison can be made in your continuous integration envrionment. 
+
+If they don't match, the test will fail and describe the difference. Failures can be inspected from Xcode's Report Navigator or by inspecting the file URLs of the failure.
 
 You can record a new reference by setting the `record` parameter to `true` on the assertion or setting `isRecording` globally.
+
+Additional API is available to faciliate changing the default location of the generated images, should you want to use third party snapshot assert helpers, for instance.
 
 ``` swift
 assertSnapshot(matching: vc, as: .image, record: true)
