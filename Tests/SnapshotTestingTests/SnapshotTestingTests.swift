@@ -1071,6 +1071,27 @@ final class SnapshotTestingTests: XCTestCase {
     #endif
   }
 
+  @available(macOS 11.0, *)
+  func testSwiftUIView_macOS() {
+    #if os(macOS)
+    struct MyView: SwiftUI.View {
+      var body: some SwiftUI.View {
+        HStack {
+          Image(systemName: "checkmark.circle.fill")
+            Text("Checked").fixedSize()
+        }
+        .padding(5)
+        .background(RoundedRectangle(cornerRadius: 5.0).fill(Color.blue))
+        .padding(10)
+      }
+    }
+
+    let view = MyView().background(Color.yellow)
+
+    assertSnapshot(matching: view, as: .image)
+    #endif
+  }
+
   @available(*, deprecated)
   func testIsRecordingProxy() {
     SnapshotTesting.record = true
