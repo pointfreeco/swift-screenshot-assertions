@@ -12,6 +12,8 @@ If you'd like to submit your own custom strategy, see [Contributing](../CONTRIBU
   - [`CALayer`](#calayer)
       - [`.image`](#image)
   - [`CaseIterable`](#caseiterable)
+  - [`CGColor`](#cgcolor)
+      - [`.color`](#color)
   - [`CGPath`](#cgpath)
       - [`.image`](#image-1)
       - [`.elementsDescription`](#elementsdescription)
@@ -23,6 +25,8 @@ If you'd like to submit your own custom strategy, see [Contributing](../CONTRIBU
   - [`NSBezierPath`](#nsbezierpath)
       - [`.image`](#image-2)
       - [`.elementsDescription`](#elementsdescription-1)
+  - [`NSColor`](#nscolor)
+      - [`.color`](#color-1)
   - [`NSImage`](#nsimage)
       - [`.image`](#image-3)
   - [`NSView`](#nsview)
@@ -40,6 +44,8 @@ If you'd like to submit your own custom strategy, see [Contributing](../CONTRIBU
   - [`UIBezierPath`](#uibezierpath)
       - [`.image`](#image-8)
       - [`.elementsDescription`](#elementsdescription-2)
+  - [`UIColor`](#uicolor)
+      - [`.color`](#color-2)
   - [`UIImage`](#uiimage)
       - [`.image`](#image-9)
   - [`UIView`](#uiview)
@@ -172,6 +178,32 @@ Records:
 "down","right"
 "left","down"
 "right","up" 
+```
+
+## CGColor
+
+**Platforms:** iOS, macOS, tvOS
+
+### `.color`
+
+A snapshot strategy for comparing colors based on RGB similarity.
+
+**Format:** `CGColor`
+
+#### Parameters:
+
+  - `precision: Float = 1`
+
+    The percentage of similarity that must match.
+
+#### Example:
+
+``` swift
+// Match reference as-is.
+assertSnapshot(matching: color, as: .color)
+
+// Allow for a 1% difference.
+assertSnapshot(matching: color, as: .color(precision: 0.99))
 ```
 
 ## CGPath
@@ -345,6 +377,32 @@ assertSnapshot(matching: path, as: .elementsDescription)
 
 // Match reference as formatted by formatter.
 assertSnapshot(matching: path, as: .elementsDescription(numberFormatter: NumberFormatter()))
+```
+
+## NSColor
+
+**Platforms:** macOS
+
+### `.color`
+
+A snapshot strategy for comparing colors based on RGB similarity.
+
+**Format:** `CGColor`
+
+#### Parameters:
+
+  - `precision: Float = 1`
+
+    The percentage of similarity that must match.
+
+#### Example:
+
+``` swift
+// Match reference as-is.
+assertSnapshot(matching: color, as: .color)
+
+// Allow for a 1% difference.
+assertSnapshot(matching: color, as: .color(precision: 0.99))
 ```
 
 ## NSImage
@@ -613,6 +671,32 @@ assertSnapshot(matching: path, as: .elementsDescription)
 
 // Match reference as formatted by formatter.
 assertSnapshot(matching: path, as: .elementsDescription(numberFormatter: NumberFormatter()))
+```
+
+## UIColor
+
+**Platforms:** iOS, tvOS
+
+### `.color`
+
+A snapshot strategy for comparing colors based on RGB similarity.
+
+**Format:** `CGColor`
+
+#### Parameters:
+
+  - `precision: Float = 1`
+
+    The percentage of similarity that must match.
+
+#### Example:
+
+``` swift
+// Match reference as-is.
+assertSnapshot(matching: color, as: .color)
+
+// Allow for a 1% difference.
+assertSnapshot(matching: color, as: .color(precision: 0.99))
 ```
 
 ## UIImage

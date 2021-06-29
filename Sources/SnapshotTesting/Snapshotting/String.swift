@@ -12,6 +12,11 @@ extension Diffing where Value == String {
     toData: { Data($0.utf8) },
     fromData: { String(decoding: $0, as: UTF8.self) }
   ) { old, new in
+    diffLines(old: old, new: new)
+  }
+}
+
+internal func diffLines(old: String, new: String) -> (String, [XCTAttachment])? {
     guard old != new else { return nil }
     let hunks = chunk(diff: SnapshotTesting.diff(
       old.split(separator: "\n", omittingEmptySubsequences: false).map(String.init),
@@ -22,5 +27,4 @@ extension Diffing where Value == String {
       .joined(separator: "\n")
     let attachment = XCTAttachment(data: Data(failure.utf8), uniformTypeIdentifier: "public.patch-file")
     return (failure, [attachment])
-  }
 }
