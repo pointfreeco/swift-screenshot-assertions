@@ -16,6 +16,26 @@ public var record: Bool {
   set { isRecording = newValue }
 }
 
+/// Root location where snapshots should be placed
+public var snapshotDirectory: String? {
+  return ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]!
+}
+
+private func snapshotDirectoryUrl(for file: StaticString) -> URL {
+
+  if let snapshotDirectory = snapshotDirectory {
+    return URL(fileURLWithPath: snapshotDirectory, isDirectory: true)
+  }
+
+  let fileUrl = URL(fileURLWithPath: "\(file)", isDirectory: false)
+  let fileName = fileUrl.deletingPathExtension().lastPathComponent
+
+  return fileUrl
+      .deletingLastPathComponent()
+      .appendingPathComponent("__Snapshots__")
+      .appendingPathComponent(fileName)
+}
+
 /// Asserts that a given value matches a reference on disk.
 ///
 /// - Parameters:
@@ -119,36 +139,6 @@ public func assertSnapshots<Value, Format>(
   }
 }
 
-/// Verifies that a given value matches a reference on disk.
-///
-/// Third party snapshot assert helpers can be built on top of this function. Simply invoke `verifySnapshot` with your own arguments, and then invoke `XCTFail` with the string returned if it is non-`nil`. For example, if you want the snapshot directory to be determined by an environment variable, you can create your own assert helper like so:
-///
-///     public func myAssertSnapshot<Value, Format>(
-///       matching value: @autoclosure () throws -> Value,
-///       as snapshotting: Snapshotting<Value, Format>,
-///       named name: String? = nil,
-///       record recording: Bool = false,
-///       timeout: TimeInterval = 5,
-///       file: StaticString = #file,
-///       testName: String = #function,
-///       line: UInt = #line
-///       ) {
-///
-///         let snapshotDirectory = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]! + "/" + #file
-///         let failure = verifySnapshot(
-///           matching: value,
-///           as: snapshotting,
-///           named: name,
-///           record: recording,
-///           snapshotDirectory: snapshotDirectory,
-///           timeout: timeout,
-///           file: file,
-///           testName: testName
-///         )
-///         guard let message = failure else { return }
-///         XCTFail(message, file: file, line: line)
-///     }
-///
 /// - Parameters:
 ///   - value: A value to compare against a reference.
 ///   - snapshotting: A strategy for serializing, deserializing, and comparing values.
@@ -165,7 +155,6 @@ public func verifySnapshot<Value, Format>(
   as snapshotting: Snapshotting<Value, Format>,
   named name: String? = nil,
   record recording: Bool = false,
-  snapshotDirectory: String? = nil,
   timeout: TimeInterval = 5,
   file: StaticString = #file,
   testName: String = #function,
@@ -176,14 +165,7 @@ public func verifySnapshot<Value, Format>(
     let recording = recording || isRecording
 
     do {
-      let fileUrl = URL(fileURLWithPath: "\(file)", isDirectory: false)
-      let fileName = fileUrl.deletingPathExtension().lastPathComponent
-
-      let snapshotDirectoryUrl = snapshotDirectory.map { URL(fileURLWithPath: $0, isDirectory: true) }
-        ?? fileUrl
-          .deletingLastPathComponent()
-          .appendingPathComponent("__Snapshots__")
-          .appendingPathComponent(fileName)
+      let snapshotDirectoryUrl = snapshotDirectoryUrl(for: file)
 
       let identifier: String
       if let name = name {
@@ -269,6 +251,8 @@ public func verifySnapshot<Value, Format>(
       let artifactsUrl = URL(
         fileURLWithPath: ProcessInfo.processInfo.environment["SNAPSHOT_ARTIFACTS"] ?? NSTemporaryDirectory(), isDirectory: true
       )
+      let fileUrl = URL(fileURLWithPath: "\(file)", isDirectory: false)
+      let fileName = fileUrl.deletingPathExtension().lastPathComponent
       let artifactsSubUrl = artifactsUrl.appendingPathComponent(fileName)
       try fileManager.createDirectory(at: artifactsSubUrl, withIntermediateDirectories: true)
       let failedSnapshotFileUrl = artifactsSubUrl.appendingPathComponent(snapshotFileUrl.lastPathComponent)
