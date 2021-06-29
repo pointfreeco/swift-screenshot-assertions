@@ -22,15 +22,8 @@ extension Snapshotting where Value == UIViewController, Format == UIImage {
     )
     -> Snapshotting {
 
-      return SimplySnapshotting.image(precision: precision, scale: traits.displayScale).asyncPullback { viewController in
-        snapshotView(
-          config: size.map { .init(safeArea: config.safeArea, size: $0, traits: config.traits) } ?? config,
-          drawHierarchyInKeyWindow: false,
-          traits: traits,
-          view: viewController.view,
-          viewController: viewController
-        )
-      }
+    return SimplySnapshotting.image(precision: precision, scale: traits.displayScale)
+      .viewController(on: config, size: size, traits: traits)
   }
 
   /// A snapshot strategy for comparing view controller views based on pixel equality.
@@ -48,15 +41,55 @@ extension Snapshotting where Value == UIViewController, Format == UIImage {
     )
     -> Snapshotting {
 
-      return SimplySnapshotting.image(precision: precision, scale: traits.displayScale).asyncPullback { viewController in
-        snapshotView(
-          config: .init(safeArea: .zero, size: size, traits: traits),
-          drawHierarchyInKeyWindow: drawHierarchyInKeyWindow,
-          traits: .init(),
-          view: viewController.view,
-          viewController: viewController
-        )
-      }
+      return SimplySnapshotting.image(precision: precision, scale: traits.displayScale)
+        .viewController(drawHierarchyInKeyWindow: drawHierarchyInKeyWindow, size: size, traits: traits)
+  }
+}
+
+extension Snapshotting where Value == UIImage {
+
+  /// Transform any snapshot strategy for comparing `UIImage` instances into a snapshot strategy for comparing
+  /// view controller views.
+  /// - Parameters:
+  ///   - config: A set of device configuration settings.
+  ///   - size: A view size override.
+  ///   - traits: A trait collection override.
+  public func viewController(
+    on config: ViewImageConfig,
+    size: CGSize? = nil,
+    traits: UITraitCollection = .init()
+  ) -> Snapshotting<UIViewController, Format> {
+    return asyncPullback { viewController in
+      snapshotView(
+        config: size.map { .init(safeArea: config.safeArea, size: $0, traits: config.traits) } ?? config,
+        drawHierarchyInKeyWindow: false,
+        traits: traits,
+        view: viewController.view,
+        viewController: viewController
+      )
+    }
+  }
+
+  /// Transform any snapshot strategy for comparing `UIImage` instances into a snapshot strategy for comparing
+  /// view controller views.
+  /// - Parameters:
+  ///   - drawHierarchyInKeyWindow: Utilize the simulator's key window in order to render `UIAppearance` and `UIVisualEffect`s. This option requires a host application for your tests and will _not_ work for framework test targets.
+  ///   - size: A view size override.
+  ///   - traits: A trait collection override.
+  public func viewController(
+    drawHierarchyInKeyWindow: Bool = false,
+    size: CGSize? = nil,
+    traits: UITraitCollection = .init()
+  ) -> Snapshotting<UIViewController, Format> {
+    return asyncPullback { viewController in
+      snapshotView(
+        config: .init(safeArea: .zero, size: size, traits: traits),
+        drawHierarchyInKeyWindow: drawHierarchyInKeyWindow,
+        traits: .init(),
+        view: viewController.view,
+        viewController: viewController
+      )
+    }
   }
 }
 
