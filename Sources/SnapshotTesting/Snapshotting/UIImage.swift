@@ -30,7 +30,8 @@ extension Diffing where Value == UIImage {
         : "Newly-taken snapshot@\(new.size) does not match reference@\(old.size)."
       let oldAttachment = XCTAttachment(image: old)
       oldAttachment.name = "reference"
-      let newAttachment = XCTAttachment(image: new)
+      let isEmptyImage = new.size == .zero
+      let newAttachment = XCTAttachment(image: isEmptyImage ? emptyImage() : new)
       newAttachment.name = "failure"
       let differenceAttachment = XCTAttachment(image: difference)
       differenceAttachment.name = "difference"

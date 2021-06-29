@@ -256,8 +256,10 @@ public func verifySnapshot<Value, Format>(
       let reference = snapshotting.diffing.fromData(data)
 
       #if os(iOS) || os(tvOS)
-      // If the image generation fails for the diffable part use the reference
-      if let localDiff = diffable as? UIImage, localDiff.size == .zero {
+      // If the image generation fails for the diffable part and the reference was empty, use the reference
+      if let localDiff = diffable as? UIImage,
+         let refImage = reference as? UIImage,
+         localDiff.size == .zero && refImage.size == .zero {
         diffable = reference
       }
       #endif

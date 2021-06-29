@@ -998,6 +998,17 @@ final class SnapshotTestingTests: XCTestCase {
     #endif
   }
 
+  func testViewAgainstEmptyImage() {
+    #if os(iOS) || os(tvOS)
+    let rect = CGRect(x: 0, y: 0, width: 0, height: 0)
+    let view = UIView(frame: rect)
+    view.backgroundColor = .blue
+
+    let failure = verifySnapshot(matching: view, as: .image, named: "notEmptyImage")
+    XCTAssertNotNil(failure)
+    #endif
+  }
+
   func testEmbeddedWebView() throws {
     #if os(iOS)
     let label = UILabel()
