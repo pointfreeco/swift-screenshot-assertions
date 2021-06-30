@@ -1024,6 +1024,80 @@ final class SnapshotTestingTests: XCTestCase {
     #endif
   }
 
+  #if os(iOS) || os(macOS)
+  final class ManipulatingWKWebViewNavigationDelegate: NSObject, WKNavigationDelegate {
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+      webView.evaluateJavaScript("document.body.children[0].classList.remove(\"hero\")") // Change layout
+    }
+  }
+  func testWebViewWithManipulatingNavigationDelegate() throws {
+    let manipulatingWKWebViewNavigationDelegate = ManipulatingWKWebViewNavigationDelegate()
+    let webView = WKWebView()
+    webView.navigationDelegate = manipulatingWKWebViewNavigationDelegate
+
+    let fixtureUrl = URL(fileURLWithPath: String(#file), isDirectory: false)
+      .deletingLastPathComponent()
+      .appendingPathComponent("__Fixtures__/pointfree.html")
+    let html = try String(contentsOf: fixtureUrl)
+    webView.loadHTMLString(html, baseURL: nil)
+    if !ProcessInfo.processInfo.environment.keys.contains("GITHUB_WORKFLOW") {
+      assertSnapshot(
+        matching: webView,
+        as: .image(size: .init(width: 800, height: 600)),
+        named: platform
+      )
+    }
+    _ = manipulatingWKWebViewNavigationDelegate
+  }
+
+  #if os(iOS) || os(macOS)
+  func testWebViewWithRealUrl() throws {
+    let manipulatingWKWebViewNavigationDelegate = ManipulatingWKWebViewNavigationDelegate()
+    let webView = WKWebView()
+    webView.navigationDelegate = manipulatingWKWebViewNavigationDelegate
+
+    webView.load(URLRequest(url: URL(string: "https://www.pointfree.co")!))
+    if !ProcessInfo.processInfo.environment.keys.contains("GITHUB_WORKFLOW") {
+      assertSnapshot(
+        matching: webView,
+        as: .image(size: .init(width: 800, height: 600)),
+        named: platform
+      )
+    }
+    _ = manipulatingWKWebViewNavigationDelegate
+  }
+  #endif
+
+  final class CancellingWKWebViewNavigationDelegate: NSObject, WKNavigationDelegate {
+    func webView(
+      _ webView: WKWebView,
+      decidePolicyFor navigationAction: WKNavigationAction,
+      decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
+      decisionHandler(.cancel)
+    }
+  }
+  func testWebViewWithCancellingNavigationDelegate() throws {
+    let cancellingWKWebViewNavigationDelegate = CancellingWKWebViewNavigationDelegate()
+    let webView = WKWebView()
+    webView.navigationDelegate = cancellingWKWebViewNavigationDelegate
+
+    let fixtureUrl = URL(fileURLWithPath: String(#file), isDirectory: false)
+      .deletingLastPathComponent()
+      .appendingPathComponent("__Fixtures__/pointfree.html")
+    let html = try String(contentsOf: fixtureUrl)
+    webView.loadHTMLString(html, baseURL: nil)
+    if !ProcessInfo.processInfo.environment.keys.contains("GITHUB_WORKFLOW") {
+      assertSnapshot(
+        matching: webView,
+        as: .image(size: .init(width: 800, height: 600)),
+        named: platform
+      )
+    }
+    _ = cancellingWKWebViewNavigationDelegate
+  }
+  #endif
+
   @available(iOS 13.0, *)
   func testSwiftUIView_iOS() {
     #if os(iOS)
