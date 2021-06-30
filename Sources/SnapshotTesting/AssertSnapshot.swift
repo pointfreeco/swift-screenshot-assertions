@@ -288,7 +288,16 @@ public func verifySnapshot<Value, Format>(
 
       let diffMessage = diffTool
         .map { "\($0) \"\(snapshotFileUrl.path)\" \"\(failedSnapshotFileUrl.path)\"" }
-        ?? "@\(minus)\n\"\(snapshotFileUrl.path)\"\n@\(plus)\n\"\(failedSnapshotFileUrl.path)\""
+        ?? """
+        @\(minus)
+        "\(snapshotFileUrl.path)"
+        @\(plus)
+        "\(failedSnapshotFileUrl.path)"
+
+        To configure output for a custom diff tool, like Kaleidoscope:
+
+            SnapshotTesting.diffTool = "ksdiff"
+        """
       return """
       Snapshot does not match reference.
 
