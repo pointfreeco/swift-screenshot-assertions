@@ -148,6 +148,9 @@
 		BC1C30E837022BC96B8707B7 /* testUpdateSeveralSnapshotsSwapingLines1.1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86AF3E4E28A1292D02E080C7 /* testUpdateSeveralSnapshotsSwapingLines1.1.swift */; };
 		BC673F41050B566E6553814F /* testUpdateSnapshotWithLongerExtendedDelimiter1.1.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E18803C6CA9CC80FF55033 /* testUpdateSnapshotWithLongerExtendedDelimiter1.1.swift */; };
 		BD42403C6DDE4A5B453DFA9F /* SnapshotTestingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA789F513A8B1E8EF5BF81E2 /* SnapshotTestingTests.swift */; };
+		BDB6003F26028DCC00DECEE8 /* ForwardingWKNavigationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6003E26028DCC00DECEE8 /* ForwardingWKNavigationDelegate.swift */; };
+		BDB6004026028DCC00DECEE8 /* ForwardingWKNavigationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6003E26028DCC00DECEE8 /* ForwardingWKNavigationDelegate.swift */; };
+		BDB6004126028DCC00DECEE8 /* ForwardingWKNavigationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6003E26028DCC00DECEE8 /* ForwardingWKNavigationDelegate.swift */; };
 		BF239214620668C79B314F6F /* testUpdateSnapshotWithExtendedDelimiter2.1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CAC8CA2C073A9D03BC22880 /* testUpdateSnapshotWithExtendedDelimiter2.1.swift */; };
 		BF4FD7664E50DA3FC34E91CF /* testUpdateSnapshotWithExtendedDelimiter1.1.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D7D0D81B7E35C6284A3E65 /* testUpdateSnapshotWithExtendedDelimiter1.1.swift */; };
 		C0F19173230428932EDD1A78 /* testUpdateSeveralSnapshotsSwapingLines2.1.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77BE996AE7868E9B58D6C74 /* testUpdateSeveralSnapshotsSwapingLines2.1.swift */; };
@@ -318,6 +321,7 @@
 		ADACB597E6A3CAC5BFEEFB05 /* testCreateSnapshotWithShorterExtendedDelimiter2.1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testCreateSnapshotWithShorterExtendedDelimiter2.1.swift; sourceTree = "<group>"; };
 		B843712AB555B46BA6E4EC2A /* CaseIterable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseIterable.swift; sourceTree = "<group>"; };
 		B8F1FEF91276E0D2BEFD9BC6 /* testCreateSnapshotEscapedNewlineLastLine.1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testCreateSnapshotEscapedNewlineLastLine.1.swift; sourceTree = "<group>"; };
+		BDB6003E26028DCC00DECEE8 /* ForwardingWKNavigationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForwardingWKNavigationDelegate.swift; sourceTree = "<group>"; };
 		C13AB875AB58FF3BCAC1AA66 /* testCreateSnapshotWithExtendedDelimiterSingleLine1.1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testCreateSnapshotWithExtendedDelimiterSingleLine1.1.swift; sourceTree = "<group>"; };
 		CB124D18325606D35B7027A6 /* NSViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSViewController.swift; sourceTree = "<group>"; };
 		D1FE81FC04984B93B0C27FA6 /* testUpdateSnapshot.1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testUpdateSnapshot.1.swift; sourceTree = "<group>"; };
@@ -494,6 +498,7 @@
 				D49092873A7A5D6DA623E352 /* String+SpecialCharacters.swift */,
 				0F6B5B3AB021FA3CD7519733 /* View.swift */,
 				4BE8DE5E8A102E1012CD0C95 /* XCTAttachment.swift */,
+				BDB6003E26028DCC00DECEE8 /* ForwardingWKNavigationDelegate.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -730,6 +735,7 @@
 				42EEB5E183FA787232DCF756 /* UIBezierPath.swift in Sources */,
 				2D9BA837D802B7347244178B /* UIImage.swift in Sources */,
 				3CB93CF15AA49A2CB461D45E /* UIView.swift in Sources */,
+				BDB6004026028DCC00DECEE8 /* ForwardingWKNavigationDelegate.swift in Sources */,
 				1ABB68DCE39CE794B07296A7 /* UIViewController.swift in Sources */,
 				30413A9E862B77B868A57B65 /* URLRequest.swift in Sources */,
 				E66A02C861A316EDB4377C2E /* View.swift in Sources */,
@@ -770,6 +776,7 @@
 				4CF683A5FA0EDF2C6ABC8B10 /* UIBezierPath.swift in Sources */,
 				0C80A6C3FD6C62FDAC4123B3 /* UIImage.swift in Sources */,
 				6630A021629D13CD012A62FD /* UIView.swift in Sources */,
+				BDB6003F26028DCC00DECEE8 /* ForwardingWKNavigationDelegate.swift in Sources */,
 				65ED4CF70D09F51DAD4C692A /* UIViewController.swift in Sources */,
 				7B9F0DFC589C66887A37F0FB /* URLRequest.swift in Sources */,
 				9727BFCBEE9C51BEFB754140 /* View.swift in Sources */,
@@ -882,6 +889,7 @@
 				5E7F4795AFED0D8D4E1D75A6 /* UIBezierPath.swift in Sources */,
 				B7C6F1A74C6D9DF70ACC52DB /* UIImage.swift in Sources */,
 				436C10BC8313288D84733DC5 /* UIView.swift in Sources */,
+				BDB6004126028DCC00DECEE8 /* ForwardingWKNavigationDelegate.swift in Sources */,
 				969985906E267A3F203613F1 /* UIViewController.swift in Sources */,
 				573488A1374FE9CD280A0BEE /* URLRequest.swift in Sources */,
 				393181237190376E8A9D300E /* View.swift in Sources */,

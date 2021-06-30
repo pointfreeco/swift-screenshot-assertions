@@ -604,7 +604,7 @@ extension View {
     #if os(iOS) || os(macOS)
     if let wkWebView = self as? WKWebView {
       return Async<Image> { callback in
-        let delegate = NavigationDelegate()
+        let delegate = ForwardingWKNavigationDelegate(originalDelegate: wkWebView.navigationDelegate)
         let work = {
           if #available(iOS 11.0, macOS 10.13, *) {
             inWindow {
@@ -646,22 +646,6 @@ extension View {
   }
   #endif
 }
-
-#if os(iOS) || os(macOS)
-private final class NavigationDelegate: NSObject, WKNavigationDelegate {
-  var didFinish: () -> Void
-
-  init(didFinish: @escaping () -> Void = {}) {
-    self.didFinish = didFinish
-  }
-
-  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    webView.evaluateJavaScript("document.readyState") { _, _ in
-      self.didFinish()
-    }
-  }
-}
-#endif
 
 #if os(iOS) || os(tvOS)
 extension UIApplication {
