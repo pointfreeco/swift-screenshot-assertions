@@ -20,6 +20,8 @@ If you'd like to submit your own custom strategy, see [Contributing](../CONTRIBU
   - [`Encodable`](#encodable)
       - [`.json`](#json)
       - [`.plist`](#plist)
+  - [`Hashable`](#hashable)
+      - [`.hash`](#hash)
   - [`NSBezierPath`](#nsbezierpath)
       - [`.image`](#image-2)
       - [`.elementsDescription`](#elementsdescription-1)
@@ -298,6 +300,36 @@ Records:
 </dict>
 </plist>
 ```
+
+## Hashable
+
+**Platforms:** All
+
+### `.hash`
+
+A snapshot strategy for comparing hashable structures based on their computed hash value.
+
+**Format:** `String`
+
+#### Example:
+
+``` swift
+assertSnapshot(matching: user, as: .hash)
+```
+
+Records:
+
+``` plain
+Hash: 0b0011010000001000100001000000001001010111000111100101110111011000
+```
+
+#### Caveat:
+
+Hashing snapshots require the `SWIFT_DETERMINISTIC_HASHING` environment variable to be defined when testing.
+
+Swift Forums: ["PSA: The stdlib now uses randomly seeded hash values"](https://forums.swift.org/t/psa-the-stdlib-now-uses-randomly-seeded-hash-values/10789/1)
+
+Keep in mind that even with hash determinism enabled you are likely to observe breaking tests every so often, caused by changes made to a structure's internal implementation.
 
 ## NSBezierPath
 

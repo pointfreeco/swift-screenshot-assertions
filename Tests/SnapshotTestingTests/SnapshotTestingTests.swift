@@ -178,6 +178,15 @@ final class SnapshotTestingTests: XCTestCase {
     assertSnapshot(matching: user, as: .plist)
   }
 
+  func testHashable() {
+    struct User: Hashable { let id: Int, name: String, bio: String }
+    let user = User(id: 1, name: "Blobby", bio: "Blobbed around the world.")
+
+    if ProcessInfo.processInfo.environment.keys.contains("SWIFT_DETERMINISTIC_HASHING") {
+      assertSnapshot(matching: user, as: .hash)
+    }
+  }
+
   func testMixedViews() {
 //    #if os(iOS) || os(macOS)
 //    // NB: CircleCI crashes while trying to instantiate SKView.
