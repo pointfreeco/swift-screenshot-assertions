@@ -8,6 +8,11 @@ public var diffTool: String? = nil
 /// Whether or not to record all new references.
 public var isRecording = false
 
+/// Whether or not to fail when a recording changes
+/// This should only be turned off when running swift-snapshot-testcase with an external screenshot tracking service
+/// such as Screenshotbot. Incorrectly turning this off can hide real regressions.
+public var isFailOnNewRecording = true
+
 /// Whether or not to record all new references.
 /// Due to a name clash in Xcode 12, this has been renamed to `isRecording`.
 @available(*, deprecated, renamed: "isRecording")
@@ -49,7 +54,10 @@ public func assertSnapshot<Value, Format>(
     line: line
   )
   guard let message = failure else { return }
-  XCTFail(message, file: file, line: line)
+
+  if (isFailOnNewRecording) {
+    XCTFail(message, file: file, line: line)
+  }
 }
 
 /// Asserts that a given value matches references on disk.
@@ -173,7 +181,7 @@ public func verifySnapshot<Value, Format>(
   )
   -> String? {
 
-    let recording = recording || isRecording
+    let recording = recording || isRecording || !isFailOnNewRecording
 
     do {
       let fileUrl = URL(fileURLWithPath: "\(file)", isDirectory: false)
