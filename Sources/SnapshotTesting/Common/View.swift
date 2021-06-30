@@ -683,6 +683,21 @@ func prepareView(
   view: UIView,
   viewController: UIViewController
   ) -> () -> Void {
+
+  /// Return early if a `UIWindow` is used for creating snapshots.
+  ///
+  /// If we end up adding a window to another window, we can end up with unbalanced calls to
+  /// appearance transitions during test teardown.
+  ///
+  /// Example: `Unbalanced calls to begin/end appearance transitions for <UIViewController: *>`.
+  if let window = view as? UIWindow {
+    if let rootViewController = window.rootViewController {
+      return add(traits: traits, viewController: rootViewController, to: window)
+    } else {
+      return {}
+    }
+  }
+
   let size = config.size ?? viewController.view.frame.size
   view.frame.size = size
   if view != viewController.view {
