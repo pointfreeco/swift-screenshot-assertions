@@ -192,6 +192,63 @@ public struct ViewImageConfig {
     return .init(safeArea: .init(top: 20, left: 0, bottom: 0, right: 0), size: size, traits: traits)
   }
 
+  public static let iPad9_7 = iPadMini
+
+  public static func iPad9_7(_ orientation: Orientation) -> ViewImageConfig {
+    return iPadMini(orientation)
+  }
+
+  public static func iPad9_7(_ orientation: TabletOrientation) -> ViewImageConfig {
+    return iPadMini(orientation)
+  }
+
+  public static let iPad10_2 = ViewImageConfig.iPad10_2(.landscape)
+
+  public static func iPad10_2(_ orientation: Orientation) -> ViewImageConfig {
+    switch orientation {
+    case .landscape:
+      return ViewImageConfig.iPad10_2(.landscape(splitView: .full))
+    case .portrait:
+      return ViewImageConfig.iPad10_2(.portrait(splitView: .full))
+    }
+  }
+
+  public static func iPad10_2(_ orientation: TabletOrientation) -> ViewImageConfig {
+    let size: CGSize
+    let traits: UITraitCollection
+    switch orientation {
+    case .landscape(let splitView):
+      switch splitView {
+      case .oneThird:
+        size = .init(width: 320, height: 810)
+        traits = .iPad10_2_Compact_SplitView
+      case .oneHalf:
+        size = .init(width: 535, height: 810)
+        traits = .iPad10_2_Compact_SplitView
+      case .twoThirds:
+        size = .init(width: 750, height: 810)
+        traits = .iPad10_2
+      case .full:
+        size = .init(width: 1080, height: 810)
+        traits = .iPad10_2
+      }
+    case .portrait(let splitView):
+      switch splitView {
+      case .oneThird:
+        size = .init(width: 320, height: 1080)
+        traits = .iPad10_2_Compact_SplitView
+      case .twoThirds:
+        size = .init(width: 480, height: 1080)
+        traits = .iPad10_2_Compact_SplitView
+      case .full:
+        size = .init(width: 810, height: 1080)
+        traits = .iPad10_2
+      }
+    }
+    return .init(safeArea: .init(top: 20, left: 0, bottom: 0, right: 0), size: size, traits: traits)
+  }
+
+
   public static let iPadPro10_5 = ViewImageConfig.iPadPro10_5(.landscape)
 
   public static func iPadPro10_5(_ orientation: Orientation) -> ViewImageConfig {
@@ -517,6 +574,10 @@ extension UITraitCollection {
 
   public static let iPadMini = iPad
   public static let iPadMini_Compact_SplitView = iPadCompactSplitView
+  public static let iPad9_7 = iPad
+  public static let iPad9_7_Compact_SplitView = iPadCompactSplitView
+  public static let iPad10_2 = iPad
+  public static let iPad10_2_Compact_SplitView = iPadCompactSplitView
   public static let iPadPro10_5 = iPad
   public static let iPadPro10_5_Compact_SplitView = iPadCompactSplitView
   public static let iPadPro11 = iPad
