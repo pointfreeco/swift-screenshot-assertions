@@ -155,6 +155,7 @@ public func assertSnapshots<Value, Format>(
 ///   - name: An optional description of the snapshot.
 ///   - recording: Whether or not to record a new reference.
 ///   - snapshotDirectory: Optional directory to save snapshots. By default snapshots will be saved in a directory with the same name as the test file, and that directory will sit inside a directory `__Snapshots__` that sits next to your test file.
+///   - artifactsDirectory: Optional directory to save failed snapshots. By default, failed snapshots will be saved in a directory with the same name as the test file, and that directory will sit inside a directory determined by the `SNAPSHOT_ARTIFACTS` environment variable. If that is also not set, a temporary directory is used.
 ///   - timeout: The amount of time a snapshot must be generated in.
 ///   - file: The file in which failure occurred. Defaults to the file name of the test case in which this function was called.
 ///   - testName: The name of the test in which failure occurred. Defaults to the function name of the test case in which this function was called.
@@ -166,6 +167,7 @@ public func verifySnapshot<Value, Format>(
   named name: String? = nil,
   record recording: Bool = false,
   snapshotDirectory: String? = nil,
+  artifactsDirectory: String? = nil,
   timeout: TimeInterval = 5,
   file: StaticString = #file,
   testName: String = #function,
@@ -266,12 +268,13 @@ public func verifySnapshot<Value, Format>(
         return nil
       }
 
-      let artifactsUrl = URL(
-        fileURLWithPath: ProcessInfo.processInfo.environment["SNAPSHOT_ARTIFACTS"] ?? NSTemporaryDirectory(), isDirectory: true
-      )
-      let artifactsSubUrl = artifactsUrl.appendingPathComponent(fileName)
-      try fileManager.createDirectory(at: artifactsSubUrl, withIntermediateDirectories: true)
-      let failedSnapshotFileUrl = artifactsSubUrl.appendingPathComponent(snapshotFileUrl.lastPathComponent)
+      let artifactsUrl = artifactsDirectory.map { URL(fileURLWithPath: $0, isDirectory: true) }
+        ?? URL(
+            fileURLWithPath: ProcessInfo.processInfo.environment["SNAPSHOT_ARTIFACTS"] ?? NSTemporaryDirectory(), isDirectory: true
+            )
+            .appendingPathComponent(fileName)
+      try fileManager.createDirectory(at: artifactsUrl, withIntermediateDirectories: true)
+      let failedSnapshotFileUrl = artifactsUrl.appendingPathComponent(snapshotFileUrl.lastPathComponent)
       try snapshotting.diffing.toData(diffable).write(to: failedSnapshotFileUrl)
 
       if !attachments.isEmpty {
