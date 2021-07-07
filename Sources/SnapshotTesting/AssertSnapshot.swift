@@ -5,6 +5,9 @@ import XCTest
 ///     diffTool = "ksdiff"
 public var diffTool: String? = nil
 
+/// Whether or not to have snapshot tests add a counter suffix when the `named` parameter in `assertSnapshot()` is `nil`.
+public var addsCounterSuffixToEmptyTestName = true
+
 /// Whether or not to record all new references.
 public var isRecording = false
 
@@ -198,8 +201,15 @@ public func verifySnapshot<Value, Format>(
       }
 
       let testName = sanitizePathComponent(testName)
+      let pathComponent: String
+      if addsCounterSuffixToEmptyTestName && name == nil {
+        pathComponent = "\(testName).\(identifier)"
+      } else {
+        pathComponent = testName
+      }
+      
       let snapshotFileUrl = snapshotDirectoryUrl
-        .appendingPathComponent("\(testName).\(identifier)")
+        .appendingPathComponent(pathComponent)
         .appendingPathExtension(snapshotting.pathExtension ?? "")
       let fileManager = FileManager.default
       try fileManager.createDirectory(at: snapshotDirectoryUrl, withIntermediateDirectories: true)
