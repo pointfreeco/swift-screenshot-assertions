@@ -71,6 +71,11 @@ extension Snapshotting where Value == UIImage, Format == UIImage {
   }
 }
 
+// remap snapshot & reference to same colorspace
+let imageContextColorSpace = CGColorSpace(name: CGColorSpace.sRGB)
+let imageContextBitsPerComponent = 8
+let imageContextBytesPerPixel = 4
+
 private func compare(_ old: UIImage, _ new: UIImage, precision: Float) -> Bool {
   guard let oldCgImage = old.cgImage else { return false }
   guard let newCgImage = new.cgImage else { return false }
@@ -80,23 +85,18 @@ private func compare(_ old: UIImage, _ new: UIImage, precision: Float) -> Bool {
   guard oldCgImage.height != 0 else { return false }
   guard newCgImage.height != 0 else { return false }
   guard oldCgImage.height == newCgImage.height else { return false }
-  // Values between images may differ due to padding to multiple of 64 bytes per row,
-  // because of that a freshly taken view snapshot may differ from one stored as PNG.
-  // At this point we're sure that size of both images is the same, so we can go with minimal `bytesPerRow` value
-  // and use it to create contexts.
-  let minBytesPerRow = min(oldCgImage.bytesPerRow, newCgImage.bytesPerRow)
-  let byteCount = minBytesPerRow * oldCgImage.height
 
+  let byteCount = imageContextBytesPerPixel * oldCgImage.width * oldCgImage.height
   var oldBytes = [UInt8](repeating: 0, count: byteCount)
-  guard let oldContext = context(for: oldCgImage, bytesPerRow: minBytesPerRow, data: &oldBytes) else { return false }
+  guard let oldContext = context(for: oldCgImage, data: &oldBytes) else { return false }
   guard let oldData = oldContext.data else { return false }
-  if let newContext = context(for: newCgImage, bytesPerRow: minBytesPerRow), let newData = newContext.data {
+  if let newContext = context(for: newCgImage), let newData = newContext.data {
     if memcmp(oldData, newData, byteCount) == 0 { return true }
   }
   let newer = UIImage(data: new.pngData()!)!
   guard let newerCgImage = newer.cgImage else { return false }
   var newerBytes = [UInt8](repeating: 0, count: byteCount)
-  guard let newerContext = context(for: newerCgImage, bytesPerRow: minBytesPerRow, data: &newerBytes) else { return false }
+  guard let newerContext = context(for: newerCgImage, data: &newerBytes) else { return false }
   guard let newerData = newerContext.data else { return false }
   if memcmp(oldData, newerData, byteCount) == 0 { return true }
   if precision >= 1 { return false }
@@ -109,16 +109,17 @@ private func compare(_ old: UIImage, _ new: UIImage, precision: Float) -> Bool {
   return true
 }
 
-private func context(for cgImage: CGImage, bytesPerRow: Int, data: UnsafeMutableRawPointer? = nil) -> CGContext? {
+private func context(for cgImage: CGImage, data: UnsafeMutableRawPointer? = nil) -> CGContext? {
+  let bytesPerRow = cgImage.width * imageContextBytesPerPixel
   guard
-    let space = cgImage.colorSpace,
+    let colorSpace = imageContextColorSpace,
     let context = CGContext(
       data: data,
       width: cgImage.width,
       height: cgImage.height,
-      bitsPerComponent: cgImage.bitsPerComponent,
+      bitsPerComponent: imageContextBitsPerComponent,
       bytesPerRow: bytesPerRow,
-      space: space,
+      space: colorSpace,
       bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
     )
     else { return nil }
